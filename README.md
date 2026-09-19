@@ -112,3 +112,33 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+## Stack
+
+Plain Vite + React SPA (no SSR, no TanStack Start, no Cloudflare/Wrangler):
+
+- **Build**: `vite build` → static output in `dist/`
+- **Routing**: React Router (`/`, `/signin`, `/signup`, `/app`, `*` → 404)
+- **Auth**: Supabase email + password, session read client-side; `/app` is guarded by
+  `src/components/RequireAuth.tsx`
+- **Styling**: Tailwind v4 via `@tailwindcss/vite`, entry stylesheet `src/styles.css`
+
+Environment variables (`.env` locally, Vercel project settings in production):
+
+```sh
+VITE_SUPABASE_URL=...
+VITE_SUPABASE_PUBLISHABLE_KEY=...
+```
+
+## Deploy to Vercel
+
+Import the repository on Vercel; `vercel.json` already pins the setup:
+
+- Framework: Vite
+- Build command: `npm run build`
+- Output directory: `dist`
+- SPA fallback: every unmatched path rewrites to `/index.html`, so deep links like `/app`
+  resolve client-side instead of 404-ing.
+
+Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in the Vercel project's
+environment variables before the first deploy.

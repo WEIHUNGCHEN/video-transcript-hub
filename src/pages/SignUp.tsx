@@ -1,30 +1,17 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { Link, useNavigate } from "react-router-dom";
+
+import { AuthShell, Field } from "@/components/AuthShell";
 import { useSession } from "@/hooks/use-session";
-import { AuthShell, Field } from "./signin";
+import { supabase } from "@/integrations/supabase/client";
+import { useDocumentMeta } from "@/lib/use-document-meta";
 
-export const Route = createFileRoute("/signup")({
-  head: () => ({
-    meta: [
-      { title: "免費註冊 / Sign up — Video Speed Reader" },
-      {
-        name: "description",
-        content: "Create a free Video Speed Reader account and get clean transcripts in minutes.",
-      },
-      { property: "og:title", content: "免費註冊 / Sign up — Video Speed Reader" },
-      {
-        property: "og:description",
-        content: "Create a free Video Speed Reader account and get clean transcripts in minutes.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: SignUpPage,
-});
+export default function SignUp() {
+  useDocumentMeta({
+    title: "免費註冊 / Sign up — Video Speed Reader",
+    description: "Create a free Video Speed Reader account and get clean transcripts in minutes.",
+  });
 
-function SignUpPage() {
   const navigate = useNavigate();
   const { session } = useSession();
   const [email, setEmail] = useState("");
@@ -33,7 +20,7 @@ function SignUpPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (session) navigate({ to: "/app", replace: true });
+    if (session) navigate("/app", { replace: true });
   }, [session, navigate]);
 
   async function onSubmit(e: React.FormEvent) {
@@ -50,8 +37,8 @@ function SignUpPage() {
       setError(error.message);
       return;
     }
-    if (data.session) navigate({ to: "/app", replace: true });
-    else navigate({ to: "/signin", replace: true });
+    if (data.session) navigate("/app", { replace: true });
+    else navigate("/signin", { replace: true });
   }
 
   return (

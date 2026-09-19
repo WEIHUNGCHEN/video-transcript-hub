@@ -1,30 +1,10 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Check, Download, Languages, ShieldCheck, Timer } from "lucide-react";
 import { useEffect } from "react";
-import { Languages, Timer, Download, ShieldCheck, Check } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+
 import { Reveal } from "@/components/Reveal";
 import { useSession } from "@/hooks/use-session";
-
-export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Video Speed Reader — 影片轉逐字稿，三分鐘完成" },
-      {
-        name: "description",
-        content:
-          "Upload your video and get a clean, accurate transcript in three minutes. Export to TXT, SRT, or Markdown.",
-      },
-      { property: "og:title", content: "Video Speed Reader — 影片轉逐字稿，三分鐘完成" },
-      {
-        property: "og:description",
-        content:
-          "Upload your video and get a clean, accurate transcript in three minutes. Export to TXT, SRT, or Markdown.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: Landing,
-});
+import { useDocumentMeta } from "@/lib/use-document-meta";
 
 const steps = [
   { title: "上傳影片", body: "Upload your video — MP4, MOV, or a link." },
@@ -33,18 +13,40 @@ const steps = [
 ];
 
 const features = [
-  { icon: Languages, title: "高準確度中英辨識", body: "Accurate Chinese and English recognition, mixed in one pass." },
-  { icon: Timer, title: "三分鐘內完成", body: "Most long-form recordings finish in under three minutes." },
-  { icon: Download, title: "一鍵匯出 TXT / SRT / Markdown", body: "Export straight into your blog, course notes, or archive." },
-  { icon: ShieldCheck, title: "隱私優先，處理完即刪除", body: "Files are deleted as soon as processing completes." },
+  {
+    icon: Languages,
+    title: "高準確度中英辨識",
+    body: "Accurate Chinese and English recognition, mixed in one pass.",
+  },
+  {
+    icon: Timer,
+    title: "三分鐘內完成",
+    body: "Most long-form recordings finish in under three minutes.",
+  },
+  {
+    icon: Download,
+    title: "一鍵匯出 TXT / SRT / Markdown",
+    body: "Export straight into your blog, course notes, or archive.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "隱私優先，處理完即刪除",
+    body: "Files are deleted as soon as processing completes.",
+  },
 ];
 
-function Landing() {
+export default function Landing() {
+  useDocumentMeta({
+    title: "Video Speed Reader — 影片轉逐字稿，三分鐘完成",
+    description:
+      "Upload your video and get a clean, accurate transcript in three minutes. Export to TXT, SRT, or Markdown.",
+  });
+
   const { session } = useSession();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (session) navigate({ to: "/app", replace: true });
+    if (session) navigate("/app", { replace: true });
   }, [session, navigate]);
 
   return (
