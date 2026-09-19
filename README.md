@@ -42,11 +42,9 @@ The site must include:
 
      服務條款.
 
-2. Authentication using Lovable's built-in Supabase-style auth (use whatever auth backend
+2. Authentication against the project's own Supabase project (email + password, no
 
-   Lovable provides by default — Lovable Cloud is fine for this v1; we'll swap to a
-
-   user-owned Supabase project in a later step):
+   Lovable Cloud involved):
 
    - Sign Up page with email + password
 
@@ -92,16 +90,6 @@ tables (do NOT create a 'profiles' or 'videos' table — only use Supabase's def
 
 dashboard.
 
-This project was built with [Lovable](https://lovable.dev).
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/417eb319-c6c8-449d-ac39-a4dd02b56ebe).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
 ## Development
 
 Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
@@ -119,7 +107,8 @@ Plain Vite + React SPA (no SSR, no TanStack Start, no Cloudflare/Wrangler):
 
 - **Build**: `vite build` → static output in `dist/`
 - **Routing**: React Router (`/`, `/signin`, `/signup`, `/app`, `*` → 404)
-- **Auth**: Supabase email + password, session read client-side; `/app` is guarded by
+- **Auth**: Supabase email + password against this project's own Supabase instance
+  (`fytwiuzgafkkuetpdtdu`); the session is read client-side and `/app` is guarded by
   `src/components/RequireAuth.tsx`
 - **Styling**: Tailwind v4 via `@tailwindcss/vite`, entry stylesheet `src/styles.css`
 
