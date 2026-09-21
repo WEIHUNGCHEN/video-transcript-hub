@@ -35,33 +35,86 @@
 
 :root {
   --radius: 0.75rem;
-  --background: oklch(0.15 0.015 285);
-  --foreground: oklch(0.97 0.005 285);
-  --card: oklch(0.19 0.018 285);
-  --card-foreground: oklch(0.97 0.005 285);
-  --popover: oklch(0.19 0.018 285);
-  --popover-foreground: oklch(0.97 0.005 285);
-  --primary: oklch(0.62 0.21 295);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.25 0.02 285);
-  --secondary-foreground: oklch(0.97 0.005 285);
-  --muted: oklch(0.24 0.018 285);
-  --muted-foreground: oklch(0.71 0.02 285);
-  --accent: oklch(0.7 0.18 305);
-  --accent-foreground: oklch(0.15 0.015 285);
-  --destructive: oklch(0.62 0.21 25);
-  --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.3 0.02 285);
-  --input: oklch(0.28 0.02 285);
-  --ring: oklch(0.62 0.21 295);
 
-  --gradient-hero: radial-gradient(
-    ellipse 80% 60% at 50% -10%,
-    color-mix(in oklab, var(--primary) 35%, transparent),
-    transparent 70%
+  /* "Twilight sparkle" palette, sampled from the dusk-over-the-bay photo:
+     deep blue-hour sky and sea, dark foliage silhouettes, a golden meadow,
+     and star-filter light glints in gold, ice-blue and a touch of magenta. */
+  --background: oklch(0.17 0.035 250);
+  --foreground: oklch(0.96 0.015 240);
+  --card: oklch(0.22 0.04 248 / 0.72);
+  --card-foreground: oklch(0.96 0.015 240);
+  --popover: oklch(0.21 0.04 248);
+  --popover-foreground: oklch(0.96 0.015 240);
+  --primary: oklch(0.84 0.13 84);
+  --primary-foreground: oklch(0.2 0.04 250);
+  --secondary: oklch(0.27 0.045 245);
+  --secondary-foreground: oklch(0.96 0.015 240);
+  --muted: oklch(0.26 0.04 245);
+  --muted-foreground: oklch(0.76 0.035 238);
+  --accent: oklch(0.74 0.12 255);
+  --accent-foreground: oklch(0.17 0.035 250);
+  --destructive: oklch(0.68 0.19 22);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.33 0.045 240);
+  --input: oklch(0.3 0.045 242);
+  --ring: oklch(0.84 0.13 84);
+
+  --glint-gold: oklch(0.9 0.14 88);
+  --glint-ice: oklch(0.85 0.1 240);
+  --glint-violet: oklch(0.72 0.17 300);
+  --glint-white: oklch(0.99 0.01 90);
+  --meadow: oklch(0.55 0.1 95);
+  --sky: oklch(0.42 0.09 252);
+
+  /* Blue-hour sky fading down, with the warm glow of the sparkle cluster. */
+  --gradient-hero:
+    radial-gradient(
+      ellipse 45% 38% at 58% 62%,
+      color-mix(in oklab, oklch(0.8 0.15 65) 20%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 70% 55% at 45% 70%,
+      color-mix(in oklab, var(--glint-ice) 16%, transparent),
+      transparent 72%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--sky) 70%, transparent) 0%,
+      color-mix(in oklab, var(--sky) 22%, transparent) 55%,
+      transparent 100%
+    );
+  --gradient-brand: linear-gradient(
+    115deg,
+    var(--glint-gold) 0%,
+    var(--glint-white) 38%,
+    var(--glint-ice) 72%,
+    var(--glint-violet) 100%
   );
-  --gradient-brand: linear-gradient(120deg, var(--primary), var(--accent));
-  --shadow-glow: 0 20px 60px -20px color-mix(in oklab, var(--primary) 60%, transparent);
+  --gradient-button: linear-gradient(120deg, oklch(0.88 0.14 86), oklch(0.8 0.13 72));
+  --shadow-glow:
+    0 0 0 1px color-mix(in oklab, var(--glint-gold) 35%, transparent),
+    0 18px 50px -18px color-mix(in oklab, var(--glint-gold) 70%, transparent);
+
+  /* Point-light glints: soft round halos in the photo's four glint colours. */
+  --glints-a:
+    radial-gradient(circle at 12% 18%, var(--glint-white) 0 1px, transparent 2.5px),
+    radial-gradient(circle at 27% 64%, var(--glint-gold) 0 1.5px, transparent 4px),
+    radial-gradient(circle at 41% 32%, var(--glint-ice) 0 1px, transparent 3px),
+    radial-gradient(circle at 56% 74%, var(--glint-gold) 0 2px, transparent 5px),
+    radial-gradient(circle at 63% 22%, var(--glint-violet) 0 1px, transparent 3px),
+    radial-gradient(circle at 71% 58%, var(--glint-white) 0 1.5px, transparent 4px),
+    radial-gradient(circle at 84% 36%, var(--glint-ice) 0 1.5px, transparent 4px),
+    radial-gradient(circle at 92% 80%, var(--glint-gold) 0 1px, transparent 3px);
+  --glints-b:
+    radial-gradient(circle at 8% 52%, var(--glint-ice) 0 1.5px, transparent 4px),
+    radial-gradient(circle at 19% 86%, var(--glint-gold) 0 1px, transparent 3px),
+    radial-gradient(circle at 34% 12%, var(--glint-gold) 0 1px, transparent 3px),
+    radial-gradient(circle at 48% 55%, var(--glint-white) 0 2px, transparent 5px),
+    radial-gradient(circle at 60% 44%, var(--glint-ice) 0 1.5px, transparent 4px),
+    radial-gradient(circle at 66% 88%, var(--glint-violet) 0 1.5px, transparent 4px),
+    radial-gradient(circle at 78% 14%, var(--glint-white) 0 1px, transparent 3px),
+    radial-gradient(circle at 95% 48%, var(--glint-gold) 0 1.5px, transparent 4px);
 }
 
 @layer base {
@@ -71,37 +124,86 @@
 
   html {
     scroll-behavior: smooth;
+    background-color: var(--color-background);
   }
 
   body {
-    background-color: var(--color-background);
+    min-height: 100vh;
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    /* Sky at the top, deep bay in the middle, golden meadow haze at the foot. */
+    background:
+      radial-gradient(
+        ellipse 120% 40% at 50% 108%,
+        color-mix(in oklab, var(--meadow) 30%, transparent),
+        transparent 70%
+      ),
+      linear-gradient(
+        180deg,
+        oklch(0.24 0.06 252) 0%,
+        var(--background) 34%,
+        oklch(0.15 0.03 240) 78%,
+        oklch(0.17 0.035 205) 100%
+      );
+    background-color: var(--background);
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--glint-gold) 40%, transparent);
+    color: var(--color-foreground);
   }
 }
 
 @utility hero-glow {
+  position: relative;
+  isolation: isolate;
   background-image: var(--gradient-hero);
+
+  /* Two glint layers twinkling out of phase, behind the content. */
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    will-change: opacity;
+  }
+
+  &::before {
+    background-image: var(--glints-a);
+    animation: glint-twinkle 5.5s ease-in-out infinite;
+  }
+
+  &::after {
+    background-image: var(--glints-b);
+    animation: glint-twinkle 7s ease-in-out -3s infinite;
+  }
 }
 
 @utility text-brand-gradient {
   background-image: var(--gradient-brand);
   background-clip: text;
   color: transparent;
+  filter: drop-shadow(0 0 18px color-mix(in oklab, var(--glint-gold) 25%, transparent));
 }
 
 @utility btn-brand {
-  background-image: var(--gradient-brand);
+  background-image: var(--gradient-button);
   color: var(--color-primary-foreground);
   box-shadow: var(--shadow-glow);
   transition:
     transform 200ms ease,
-    filter 200ms ease;
+    filter 200ms ease,
+    box-shadow 200ms ease;
 
   &:hover {
     transform: translateY(-1px);
-    filter: brightness(1.08);
+    filter: brightness(1.06);
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--glint-gold) 55%, transparent),
+      0 22px 60px -16px color-mix(in oklab, var(--glint-gold) 85%, transparent);
   }
 }
 
@@ -115,5 +217,23 @@
   &[data-visible="true"] {
     opacity: 1;
     transform: none;
+  }
+}
+
+@keyframes glint-twinkle {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-glow::before,
+  .hero-glow::after {
+    animation: none;
+    opacity: 0.7;
   }
 }
