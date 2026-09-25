@@ -1,10 +1,12 @@
+"use client";
+
 import { Check, Download, Languages, ShieldCheck, Timer } from "lucide-react";
 import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { Reveal } from "@/components/Reveal";
 import { useSession } from "@/hooks/use-session";
-import { useDocumentMeta } from "@/lib/use-document-meta";
 
 const steps = [
   { title: "上傳影片", body: "Upload your video — MP4, MOV, or a link." },
@@ -36,18 +38,13 @@ const features = [
 ];
 
 export default function Landing() {
-  useDocumentMeta({
-    title: "Video Speed Reader — 影片轉逐字稿，三分鐘完成",
-    description:
-      "Upload your video and get a clean, accurate transcript in three minutes. Export to TXT, SRT, or Markdown.",
-  });
 
   const { session } = useSession();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   useEffect(() => {
-    if (session) navigate("/app", { replace: true });
-  }, [session, navigate]);
+    if (session) router.replace("/app");
+  }, [session, router]);
 
   return (
     <div className="min-h-screen">
@@ -57,7 +54,7 @@ export default function Landing() {
             Video <span className="text-brand-gradient">Speed Reader</span>
           </span>
           <Link
-            to="/signin"
+            href="/sign-in"
             className="rounded-lg border border-border px-3.5 py-2 text-sm font-medium transition hover:bg-secondary"
           >
             Sign in / 登入
@@ -81,7 +78,7 @@ export default function Landing() {
             </Reveal>
             <Reveal delay={200}>
               <Link
-                to="/signup"
+                href="/sign-up"
                 className="btn-brand mt-10 inline-flex rounded-xl px-8 py-4 text-base font-semibold"
               >
                 免費開始使用 / Get started free
@@ -154,7 +151,7 @@ export default function Landing() {
                     </li>
                   </ul>
                   <Link
-                    to="/signup"
+                    href="/sign-up"
                     className="mt-8 block rounded-lg border border-border px-4 py-3 text-center text-sm font-medium transition hover:bg-secondary"
                   >
                     免費開始 / Start free
@@ -178,7 +175,7 @@ export default function Landing() {
                     </li>
                   </ul>
                   <Link
-                    to="/signup"
+                    href="/sign-up"
                     className="btn-brand mt-8 block rounded-lg px-4 py-3 text-center text-sm font-semibold"
                   >
                     升級 Pro / Get Pro

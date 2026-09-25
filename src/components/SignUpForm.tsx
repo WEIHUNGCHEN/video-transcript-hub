@@ -1,18 +1,16 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { AuthShell, Field } from "@/components/AuthShell";
 import { useSession } from "@/hooks/use-session";
-import { supabase } from "@/integrations/supabase/client";
-import { useDocumentMeta } from "@/lib/use-document-meta";
+import { supabase } from "@/lib/supabase/client";
 
-export default function SignIn() {
-  useDocumentMeta({
-    title: "Sign in / 登入 — Video Speed Reader",
-    description: "Sign in to Video Speed Reader and turn your videos into clean transcripts.",
-  });
+export default function SignUp() {
 
-  const navigate = useNavigate();
+  const router = useRouter();
   const { session } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,31 +18,36 @@ export default function SignIn() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (session) navigate("/app", { replace: true });
-  }, [session, navigate]);
+    if (session) router.replace("/app");
+  }, [session, router]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
     setError(null);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { emailRedirectTo: `${window.location.origin}/app` },
+    });
     setBusy(false);
     if (error) {
       setError(error.message);
       return;
     }
-    navigate("/app", { replace: true });
+    if (data.session) router.replace("/app");
+    else router.replace("/sign-in");
   }
 
   return (
     <AuthShell
-      title="歡迎回來"
-      subtitle="Sign in to your Video Speed Reader account"
+      title="免費開始使用"
+      subtitle="Create your account — no credit card required"
       footer={
         <>
-          還沒有帳號？{" "}
-          <Link to="/signup" className="text-primary hover:underline">
-            免費註冊 / Sign up
+          已經有帳號？{" "}
+          <Link href="/sign-in" className="text-primary hover:underline">
+            登入 / Sign in
           </Link>
         </>
       }
@@ -58,7 +61,7 @@ export default function SignIn() {
           disabled={busy}
           className="btn-brand w-full rounded-lg px-4 py-3 text-sm font-semibold disabled:opacity-60"
         >
-          {busy ? "登入中…" : "Sign in / 登入"}
+          {busy ? "建立帳號中…" : "Create account / 註冊"}
         </button>
       </form>
     </AuthShell>

@@ -1,5 +1,7 @@
+"use client";
+
 import type { ReactNode } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 export function AuthShell({
   title,
@@ -14,7 +16,7 @@ export function AuthShell({
 }) {
   return (
     <main className="hero-glow flex min-h-screen flex-col items-center justify-center px-4 py-16">
-      <Link to="/" className="mb-8 text-lg font-semibold tracking-tight">
+      <Link href="/" className="mb-8 text-lg font-semibold tracking-tight">
         Video <span className="text-brand-gradient">Speed Reader</span>
       </Link>
       <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6 sm:p-8">

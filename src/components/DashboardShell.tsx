@@ -1,36 +1,27 @@
-import { useQueryClient } from "@tanstack/react-query";
+"use client";
+
 import { FileVideo } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-import { useSession } from "@/hooks/use-session";
-import { supabase } from "@/integrations/supabase/client";
-import { useDocumentMeta } from "@/lib/use-document-meta";
+import { supabase } from "@/lib/supabase/client";
 
-export default function AppDashboard() {
-  useDocumentMeta({
-    title: "Dashboard — Video Speed Reader",
-    description: "Your Video Speed Reader transcripts dashboard.",
-    robots: "noindex",
-    twitterCard: "summary",
-  });
-
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const { user } = useSession();
-  const email = user?.email ?? "";
+// The email comes from the server component, which has already verified the
+// session — so the dashboard renders signed-in on the first paint.
+export default function DashboardShell({ email }: { email: string }) {
+  const router = useRouter();
 
   async function handleSignOut() {
-    await queryClient.cancelQueries();
-    queryClient.clear();
     await supabase.auth.signOut();
-    navigate("/signin", { replace: true });
+    router.replace("/sign-in");
+    router.refresh();
   }
 
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-20 border-b border-border bg-background/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
-          <Link to="/app" className="text-sm font-semibold tracking-tight sm:text-base">
+          <Link href="/app" className="text-sm font-semibold tracking-tight sm:text-base">
             Video <span className="text-brand-gradient">Speed Reader</span>
           </Link>
           <div className="flex items-center gap-3">
