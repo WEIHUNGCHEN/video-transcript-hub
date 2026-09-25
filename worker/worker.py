@@ -64,6 +64,38 @@ class JobError(Exception):
     """A failure with a message worth showing the user."""
 
 
+# Known failures worth explaining in the user's own terms, rather than pasting
+# a tool's stderr at them.
+FRIENDLY_ERRORS = [
+    (
+        "Sign in to confirm",
+        "YouTube blocks downloads from server IP addresses. Use a direct media "
+        "link (mp3/mp4) instead — YouTube is not supported yet.",
+    ),
+    (
+        "Video unavailable",
+        "The source says the video is unavailable — check that the link is public.",
+    ),
+    ("HTTP Error 404", "The URL returned 404 — the file is not there."),
+    ("HTTP Error 403", "The source refused the request (403). The link may be private or expired."),
+    ("Unsupported URL", "That URL is not a direct media link."),
+]
+
+
+def _explain(stderr: str, returncode: int) -> str:
+    """Turn a tool's stderr into one readable line."""
+    for needle, message in FRIENDLY_ERRORS:
+        if needle in stderr:
+            return message
+
+    # Prefer the real error over the warnings that usually precede it.
+    lines = [ln.strip() for ln in stderr.splitlines() if ln.strip()]
+    errors = [ln for ln in lines if ln.startswith("ERROR")]
+    if errors:
+        return errors[-1]
+    return lines[-1] if lines else f"exit code {returncode}"
+
+
 def run(cmd: list[str], *, timeout: int, what: str, capture: bool = True):
     """subprocess.run with a timeout and a user-facing error message."""
     try:
@@ -71,9 +103,7 @@ def run(cmd: list[str], *, timeout: int, what: str, capture: bool = True):
     except subprocess.TimeoutExpired:
         raise JobError(f"{what} timed out after {timeout}s") from None
     except subprocess.CalledProcessError as e:
-        tail = (e.stderr or "").strip().splitlines()[-3:]
-        detail = " / ".join(tail) if tail else f"exit code {e.returncode}"
-        raise JobError(f"{what} failed: {detail}") from None
+        raise JobError(f"{what} failed: {_explain(e.stderr or '', e.returncode)}") from None
 
 
 def get_job(job_id: str) -> dict:
