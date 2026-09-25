@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import JobsRealtime from "@/components/JobsRealtime";
 import SignOutButton from "@/components/SignOutButton";
 import UploadForm from "@/components/UploadForm";
 import { createClient } from "@/lib/supabase/server";
@@ -20,13 +21,17 @@ type Job = {
   created_at: string;
   video_source_url: string;
   status: string;
+  error_message: string | null;
 };
+
+const ACTIVE_STATUSES = ["pending", "downloading", "transcribe"];
 
 const STATUS_STYLES: Record<string, string> = {
   pending: "bg-secondary text-muted-foreground",
   downloading: "bg-secondary text-muted-foreground",
   transcribe: "bg-accent/20 text-accent",
   done: "bg-primary/20 text-primary",
+  failed: "bg-destructive/20 text-destructive",
 };
 
 function relativeTime(iso: string) {
@@ -52,14 +57,16 @@ export default async function Page() {
 
   const { data } = await supabase
     .from("jobs")
-    .select("id, created_at, video_source_url, status")
+    .select("id, created_at, video_source_url, status, error_message")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false })
     .limit(20);
   const jobs = (data ?? []) as Job[];
+  const hasActiveJob = jobs.some((job) => ACTIVE_STATUSES.includes(job.status));
 
   return (
     <div className="min-h-screen">
+      <JobsRealtime userId={user.id} hasActiveJob={hasActiveJob} />
       <header className="sticky top-0 z-20 border-b border-border bg-background/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
           <Link href="/app" className="text-sm font-semibold tracking-tight sm:text-base">
@@ -101,46 +108,50 @@ export default async function Page() {
               </p>
             ) : (
               jobs.map((job) => (
-                <div
-                  key={job.id}
-                  className="grid grid-cols-[auto_1fr_auto_auto] items-center gap-4 border-b border-border/60 px-4 py-3 text-sm last:border-b-0"
-                >
-                  <span className="text-muted-foreground">{relativeTime(job.created_at)}</span>
-                  <span className="truncate" title={job.video_source_url}>
-                    {truncate(job.video_source_url)}
-                  </span>
-                  <span
-                    className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                      STATUS_STYLES[job.status] ?? "bg-secondary text-muted-foreground"
-                    }`}
-                  >
-                    {job.status}
-                  </span>
-                  {job.status === "done" ? (
-                    <a
-                      href={`/api/jobs/${job.id}/transcript`}
-                      download={`transcript-${job.id.slice(0, 8)}.txt`}
-                      className="inline-flex items-center gap-1.5 text-primary hover:underline"
+                <div key={job.id} className="border-b border-border/60 last:border-b-0">
+                  <div className="grid grid-cols-[auto_1fr_auto_auto] items-center gap-4 px-4 py-3 text-sm">
+                    <span className="text-muted-foreground">{relativeTime(job.created_at)}</span>
+                    <span className="truncate" title={job.video_source_url}>
+                      {truncate(job.video_source_url)}
+                    </span>
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-xs font-medium ${
+                        STATUS_STYLES[job.status] ?? "bg-secondary text-muted-foreground"
+                      }`}
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="h-4 w-4"
-                        aria-hidden="true"
+                      {job.status}
+                    </span>
+                    {job.status === "done" ? (
+                      <a
+                        href={`/api/jobs/${job.id}/transcript`}
+                        download={`transcript-${job.id.slice(0, 8)}.txt`}
+                        className="inline-flex items-center gap-1.5 text-primary hover:underline"
                       >
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                        <polyline points="7 10 12 15 17 10" />
-                        <line x1="12" x2="12" y1="15" y2="3" />
-                      </svg>
-                      .txt
-                    </a>
-                  ) : (
-                    <span className="text-muted-foreground">—</span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="h-4 w-4"
+                          aria-hidden="true"
+                        >
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                          <polyline points="7 10 12 15 17 10" />
+                          <line x1="12" x2="12" y1="15" y2="3" />
+                        </svg>
+                        .txt
+                      </a>
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
+                  </div>
+                  {job.status === "failed" && job.error_message && (
+                    <p className="px-4 pb-3 text-xs text-destructive">
+                      失敗原因 / Reason: {job.error_message}
+                    </p>
                   )}
                 </div>
               ))
