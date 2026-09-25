@@ -1,9 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Preserves M0's "the build doesn't gate on types" behaviour; errors still
-  // show up in the editor.
+  // show up in the editor. (next.config eslint options are gone in Next 16.)
   typescript: { ignoreBuildErrors: true },
-  eslint: { ignoreDuringBuilds: true },
   // The SPA used /signin and /signup; keep old links working.
   async redirects() {
     return [

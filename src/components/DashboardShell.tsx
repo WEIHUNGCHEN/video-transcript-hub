@@ -25,6 +25,12 @@ export default function DashboardShell({ email }: { email: string }) {
             Video <span className="text-brand-gradient">Speed Reader</span>
           </Link>
           <div className="flex items-center gap-3">
+            <Link
+              href="/upload"
+              className="rounded-lg border border-border px-3 py-1.5 text-sm transition hover:bg-secondary"
+            >
+              上傳影片 / Upload
+            </Link>
             <span className="hidden max-w-[180px] truncate text-sm text-muted-foreground sm:inline">
               {email}
             </span>
