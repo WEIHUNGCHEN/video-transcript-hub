@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { checkMediaSource } from "@/lib/media-source";
+
 export default function UploadForm() {
   const router = useRouter();
   const [url, setUrl] = useState("");
@@ -13,8 +15,15 @@ export default function UploadForm() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setBusy(true);
     setError(null);
+
+    const source = checkMediaSource(url);
+    if (!source.ok) {
+      setError(source.reason);
+      return;
+    }
+
+    setBusy(true);
 
     const res = await fetch("/api/jobs", {
       method: "POST",
@@ -49,7 +58,7 @@ export default function UploadForm() {
             className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-ring/40"
           />
           <span className="mt-1.5 block text-xs text-muted-foreground">
-            YouTube 連結在 M1 不支援 — 雲端 IP 會被要求登入驗證。
+            支援直接媒體連結（mp3 / mp4）。YouTube、Spotify、串流平台不支援。
           </span>
         </label>
 

@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
+import { checkMediaSource } from "@/lib/media-source";
 import { createClient as createServerSupabase } from "@/lib/supabase/server";
 
 export async function POST(req: Request) {
@@ -16,6 +17,12 @@ export async function POST(req: Request) {
   const body = await req.json().catch(() => ({}));
   if (!body.video_source_url) {
     return NextResponse.json({ error: "video_source_url required" }, { status: 400 });
+  }
+
+  // Checked here as well as in the form: the form can be bypassed.
+  const source = checkMediaSource(body.video_source_url);
+  if (!source.ok) {
+    return NextResponse.json({ error: source.reason }, { status: 400 });
   }
 
   // 2. Use the Supabase Secret key to insert the job + session rows. The caller
