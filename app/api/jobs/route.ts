@@ -25,6 +25,21 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: source.reason }, { status: 400 });
   }
 
+  // Fast floor check: blocks the obvious "no credits at all" case at the form.
+  // The precise duration-vs-balance check runs on the worker, which knows how
+  // long the video actually is.
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("credits_balance")
+    .eq("id", user.id)
+    .maybeSingle();
+  if (!profile || Number(profile.credits_balance) < 1) {
+    return NextResponse.json(
+      { error: "點數不足，請先購買。/ Insufficient credits — buy more on the credits page." },
+      { status: 402 },
+    );
+  }
+
   // 2. Use the Supabase Secret key to insert the job + session rows. The caller
   // is already authenticated above; the secret key bypasses RLS so the insert
   // and the follow-up update land in one round-trip each.

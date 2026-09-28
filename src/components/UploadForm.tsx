@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -11,11 +12,13 @@ export default function UploadForm() {
   const [topic, setTopic] = useState("");
   const [language, setLanguage] = useState("zh");
   const [error, setError] = useState<string | null>(null);
+  const [needsCredits, setNeedsCredits] = useState(false);
   const [busy, setBusy] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setNeedsCredits(false);
 
     const source = checkMediaSource(url);
     if (!source.ok) {
@@ -35,6 +38,7 @@ export default function UploadForm() {
 
     if (!res.ok) {
       setError(body.error ?? `Request failed (${res.status})`);
+      setNeedsCredits(res.status === 402);
       return;
     }
 
@@ -86,7 +90,16 @@ export default function UploadForm() {
           </select>
         </label>
 
-        {error && <p className="text-sm text-destructive">{error}</p>}
+        {error && (
+          <p className="text-sm text-destructive">
+            {error}{" "}
+            {needsCredits && (
+              <Link href="/credits" className="underline">
+                購買點數 / Buy credits
+              </Link>
+            )}
+          </p>
+        )}
 
         <button
           type="submit"

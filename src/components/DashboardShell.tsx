@@ -8,7 +8,7 @@ import { supabase } from "@/lib/supabase/client";
 
 // The email comes from the server component, which has already verified the
 // session — so the dashboard renders signed-in on the first paint.
-export default function DashboardShell({ email }: { email: string }) {
+export default function DashboardShell({ email, credits }: { email: string; credits: number }) {
   const router = useRouter();
 
   async function handleSignOut() {
@@ -25,6 +25,13 @@ export default function DashboardShell({ email }: { email: string }) {
             Video <span className="text-brand-gradient">Speed Reader</span>
           </Link>
           <div className="flex items-center gap-3">
+            <Link
+              href="/credits"
+              className="rounded-full border border-border px-3 py-1.5 text-sm transition hover:bg-secondary"
+            >
+              <span className="text-muted-foreground">Credits </span>
+              <span className="font-medium text-primary">{credits}</span>
+            </Link>
             <Link
               href="/upload"
               className="rounded-lg border border-border px-3 py-1.5 text-sm transition hover:bg-secondary"

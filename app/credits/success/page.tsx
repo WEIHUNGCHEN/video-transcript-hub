@@ -1,19 +1,18 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-import DashboardShell from "@/components/DashboardShell";
+import PurchaseSuccess from "@/components/PurchaseSuccess";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Dashboard — Video Speed Reader",
-  description: "Your Video Speed Reader transcripts dashboard.",
+  title: "付款完成 / Payment complete — Video Speed Reader",
+  description: "Your credit purchase is being confirmed.",
   robots: { index: false },
-  twitter: { card: "summary" },
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function Page() {
-  // Server-side auth gate: replaces the client-side RequireAuth guard the
-  // Vite SPA used, so an unauthenticated request never renders the dashboard.
   const supabase = await createClient();
   const {
     data: { user },
@@ -26,7 +25,7 @@ export default async function Page() {
     .eq("id", user.id)
     .maybeSingle();
 
-  return (
-    <DashboardShell email={user.email ?? ""} credits={Number(profile?.credits_balance ?? 0)} />
-  );
+  // This page never grants credits — the webhook does. It only waits for the
+  // balance to move, so a buyer who closes the tab still gets credited.
+  return <PurchaseSuccess initialBalance={Number(profile?.credits_balance ?? 0)} />;
 }

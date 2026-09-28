@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import CreditsBadge from "@/components/CreditsBadge";
 import JobsRealtime from "@/components/JobsRealtime";
 import SignOutButton from "@/components/SignOutButton";
 import UploadForm from "@/components/UploadForm";
@@ -55,6 +56,12 @@ export default async function Page() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/sign-in");
 
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("credits_balance")
+    .eq("id", user.id)
+    .maybeSingle();
+
   const { data } = await supabase
     .from("jobs")
     .select("id, created_at, video_source_url, status, error_message")
@@ -73,6 +80,7 @@ export default async function Page() {
             Video <span className="text-brand-gradient">Speed Reader</span>
           </Link>
           <div className="flex items-center gap-3">
+            <CreditsBadge credits={Number(profile?.credits_balance ?? 0)} />
             <span className="hidden max-w-[180px] truncate text-sm text-muted-foreground sm:inline">
               {user.email}
             </span>
