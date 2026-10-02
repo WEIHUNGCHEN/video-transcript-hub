@@ -12,7 +12,11 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default async function Page() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ session_id?: string }>;
+}) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -25,7 +29,14 @@ export default async function Page() {
     .eq("id", user.id)
     .maybeSingle();
 
-  // This page never grants credits — the webhook does. It only waits for the
-  // balance to move, so a buyer who closes the tab still gets credited.
-  return <PurchaseSuccess initialBalance={Number(profile?.credits_balance ?? 0)} />;
+  const { session_id: sessionId } = await searchParams;
+
+  // This page never grants credits — the webhook does. It only reports whether
+  // this session's payment has been credited yet.
+  return (
+    <PurchaseSuccess
+      initialBalance={Number(profile?.credits_balance ?? 0)}
+      {...(sessionId ? { sessionId } : {})}
+    />
+  );
 }
